@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://bolekniad8fr0"]
+
+[ext_resource type="Script" uid="uid://bilisig2ww1dx" path="res://main.gd" id="1_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://cbue41bj16deh" path="res://player.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://djtryotx33s26" path="res://mob.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://b3gdkskp2steo" path="res://hud.tscn" id="4_1bvp3"]
+[ext_resource type="PackedScene" path="res://power_up.tscn" id="5_power_up"]
+
+[sub_resource type="Curve2D" id="Curve2D_h2yge"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 480, 0, 0, 0, 0, 0, 480, 720, 0, 0, 0, 0, 0, 720, 0, 0, 0, 0, 0, 0)
+}
+point_count = 5
+
+[node name="Main" type="Node" unique_id=43783101]
+script = ExtResource("1_0xm2m")
+mob_scene = ExtResource("2_h2yge")
+power_up_scene = ExtResource("5_power_up")
+
+[node name="Player" parent="." unique_id=137337702 instance=ExtResource("1_ig7tw")]
+
+[node name="MobTimer" type="Timer" parent="." unique_id=402901528]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="." unique_id=1224724284]
+
+[node name="StartTimer" type="Timer" parent="." unique_id=1224840907]
+wait_time = 2.0
+one_shot = true
+
+[node name="PowerUpTimer" type="Timer" parent="."]
+wait_time = 5.0
+
+[node name="InvincibilityTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="SlowDurationTimer" type="Timer" parent="."]
+wait_time = 8.0
+one_shot = true
+
+[node name="SlowWarningTimer" type="Timer" parent="."]
+wait_time = 7.0
+one_shot = true
+
+[node name="ScreenClearPulse" type="Polygon2D" parent="."]
+visible = false
+z_index = 1
+polygon = PackedVector2Array(0, -32, 16, -28, 28, -16, 32, 0, 28, 16, 16, 28, 0, 32, -16, 28, -28, 16, -32, 0, -28, -16, -16, -28)
+color = Color(1, 0.15, 0.15, 0.8)
+
+[node name="StartPosition" type="Marker2D" parent="." unique_id=758805870]
+position = Vector2(240, 450)
+
+[node name="MobPath" type="Path2D" parent="." unique_id=305904360]
+curve = SubResource("Curve2D_h2yge")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath" unique_id=94938104]
+
+[node name="HUD" parent="." unique_id=1262222863 instance=ExtResource("4_1bvp3")]
+
+[connection signal="hit" from="Player" to="." method="game_over"]
+[connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="PowerUpTimer" to="." method="_on_power_up_timer_timeout"]
+[connection signal="timeout" from="InvincibilityTimer" to="." method="_on_invincibility_timer_timeout"]
+[connection signal="timeout" from="SlowDurationTimer" to="." method="_on_slow_duration_timer_timeout"]
+[connection signal="timeout" from="SlowWarningTimer" to="." method="_on_slow_warning_timer_timeout"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
